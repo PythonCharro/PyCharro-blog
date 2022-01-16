@@ -93,8 +93,9 @@ def register():
         new_user = User(email=form.email.data,password_hash=pass_hash,name=form.name.data)
         db.session.add(new_user)
         db.session.commit()
-        login_user(new_user)
-        return redirect(url_for('add_new_post'))
+        if new_user.id == 1:
+            login_user(new_user)
+        return redirect(url_for('get_all_posts'))
     return render_template("register.html",form=form)
 
 
@@ -106,7 +107,8 @@ def login():
         if user is None:
             flash('Email not found, try again!')
         elif werkzeug.security.check_password_hash(user.password_hash,form.password.data):
-            login_user(user)
+            if user.id ==1: #only the first user can post!
+                login_user(user)
             return redirect(url_for('get_all_posts'))
         else:
             flash('Login failed!')
